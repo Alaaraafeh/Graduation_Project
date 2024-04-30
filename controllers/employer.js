@@ -4,7 +4,6 @@ const Post = require("../models/post");
 const { validationResult } = require('express-validator');
 
 
-
 exports.getNewUser = async (req, res, next) => {
     res.status(200).json({ page: "employer registration page"})
 };
@@ -56,6 +55,7 @@ exports.postAddUser = async (req, res, next) => {
     }
 };
 
+
 // post jops
 exports.getPosts = async (req, res, next) => {
     try{
@@ -77,6 +77,7 @@ exports.getPosts = async (req, res, next) => {
     }
 }
 
+
 exports.createPost = async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -84,11 +85,6 @@ exports.createPost = async (req, res, next) => {
         error.statusCode = 422; // adding own custume property 
         return next(error);  // it will exist the fuction exe here and access the error handel function or middelware in the app
     }
- //   const jopName = req.body.jopName;
- //   const companyName = req.body.companyName;
- //   const jopDescription = req.body.jopDescription;
- //   const jopRequirement = req.body.jopRequirement;
- //   const imageUrl = req.body.imageUrl;
 
     const { jobTitle, jobLocation, companyName, 
         companyMail, jobDescription, category,
