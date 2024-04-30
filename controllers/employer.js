@@ -90,21 +90,31 @@ exports.createPost = async (req, res, next) => {
  //   const jopRequirement = req.body.jopRequirement;
  //   const imageUrl = req.body.imageUrl;
 
-    const { jopName, companyName, jopDescription, jopRequirement, imageUrl } = req.body;
-
+    const { jobTitle, jobLocation, companyName, 
+        companyMail, jobDescription, category,
+        jobType, salary, currency, timePeriod, 
+        companyWebsite, companyInfo, imageUrl } = req.body;
     
     const post = new Post({
-        jopName : jopName,
+        jobTitle : jobTitle,
+        jobLocation: jobLocation,
         companyName: companyName,
-        jopDescription: jopDescription,
-        jopRequirement: jopRequirement,
+        companyMail: companyMail,
+        jobDescription: jobDescription,
+        category: category,
+        jobType: jobType,
         imageUrl: imageUrl,
+        salary: salary,
+        currency: currency,
+        timePeriod: timePeriod,
+        companyWebsite: companyWebsite,
+        companyInfo: companyInfo,
         creator: {name: "alaa"}
     })
     try {
         await post.save()
         res.status(201).json({
-            message: "the jop post was created successfully!",
+            message: "Post created successfully!",
             post: post
         })
     }catch (err) {

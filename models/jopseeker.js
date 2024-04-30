@@ -32,7 +32,8 @@ const jobSeekerSchema = new Schema({
         required: true
     },
     disability: {
-        type: String
+        type: String,
+        required: true
     }
 }, { timestamps: true });
 
