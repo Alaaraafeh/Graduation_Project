@@ -78,5 +78,8 @@ router.post("/createPost", [
 ], employerController.createPost)
 
 
+router.get('/post/:postId',employerController.getPost);
+
+
 
 module.exports = router; 

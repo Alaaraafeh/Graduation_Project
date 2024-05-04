@@ -62,6 +62,7 @@ exports.getPosts = async (req, res, next) => {
         const allPosts = await Post.find();
         if ( allPosts.length > 0){
             return res.status(200).json({
+                message: "Fetched posts successfully",
                 posts: allPosts
             });
         } else {
@@ -83,13 +84,20 @@ exports.createPost = async (req, res, next) => {
     if (!errors.isEmpty()) {
         const error = new Error('Validation failed, the data is incorrect')
         error.statusCode = 422; // adding own custume property 
-        return next(error);  // it will exist the fuction exe here and access the error handel function or middelware in the app
+        throw error;
     }
-
-    const { jobTitle, jobLocation, companyName, 
+    if (!req.file) {
+        const error = new Error('No image provided.');
+        error.statusCode = 422;
+        throw error;
+    }
+    const imageUrl = req.file.path.replace("\\" ,"/");
+    const { 
+        jobTitle, jobLocation, companyName, 
         companyMail, jobDescription, category,
         jobType, salary, currency, timePeriod, 
-        companyWebsite, companyInfo, imageUrl } = req.body;
+        companyWebsite, companyInfo 
+    } = req.body;
     
     const post = new Post({
         jobTitle : jobTitle,
@@ -113,10 +121,26 @@ exports.createPost = async (req, res, next) => {
             message: "Post created successfully!",
             post: post
         })
-    }catch (err) {
+    } catch (err) {
         next(err);
     }
 
+}
+
+exports.getPost = async (req, res, next) => {
+    const postId = req.params.postId;
+    try {
+        console.log(postId)
+        const findPost = await Post.findById(postId);
+        if (!findPost) {
+            const error = new Error("not find post.");
+            error.statusCode = 404;
+            throw error;
+        }
+        res.status(200).json({ message: 'post fetched.', post: findPost});
+    } catch (err) {
+        next(err);
+    }
 }
 
 
