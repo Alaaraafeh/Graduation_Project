@@ -40,7 +40,7 @@ exports.logIn = async (req, res, next) => {
             throw error;
         }
         
-        const token = jwt.sign({ email: user.email, userId: user._id.toString() }, "tokensecret", { expiresIn: '1h' }); // security
+        const token = jwt.sign({ email: user.email, userId: user._id.toString() }, "tokensecret", { expiresIn: '24h' }); // security
         
         return res.status(200).json({ token: token, message: 'Logged in successfully' });
 
@@ -54,5 +54,21 @@ exports.logIn = async (req, res, next) => {
         // If it's not a 401 error, return a generic error message
         return res.status(500).json({ message: 'Something went wrong. Please try again later.' });
     }
+    }
+};
+
+exports.authenticateUser = (req, res, next) => {
+    const token = req.headers.authorization; // Assuming token is sent in the Authorization header
+
+    if (!token) {
+        return res.status(401).json({ message: 'No token provided' });
+    }
+
+    try {
+        const decodedToken = jwt.verify(token, "tokensecret");
+        req.userData = decodedToken;
+        next(); // Proceed to the next middleware or route handler
+    } catch (error) {
+        return res.status(401).json({ message: 'Invalid token or token expired' });
     }
 };
