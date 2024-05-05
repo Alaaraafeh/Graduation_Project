@@ -1,7 +1,11 @@
 const bcrypt = require('bcrypt');
+const path = require('path');
+const fs = require('fs');
 const Employer = require("../models/employer");
 const Post = require("../models/post");
 const { validationResult } = require('express-validator');
+const { find } = require('../models/jopseeker');
+const { post } = require('../routes/jopseeker');
 
 
 exports.getNewUser = async (req, res, next) => {
@@ -63,7 +67,7 @@ exports.getPosts = async (req, res, next) => {
         if ( allPosts.length > 0){
             return res.status(200).json({
                 message: "Fetched posts successfully",
-                posts: allPosts
+                posts: allPosts   // jop title, location, jop type
             });
         } else {
             return res.status(200).json({
@@ -91,7 +95,10 @@ exports.createPost = async (req, res, next) => {
         error.statusCode = 422;
         throw error;
     }
-    const imageUrl = req.file.path.replace("\\" ,"/");
+  //  const imageUrl = req.file.path.replace("\\" ,"/");
+    let imageUrl = req.file ? req.file.path : null; // Use ternary operator to handle null if req.file is undefined
+    imageUrl = imageUrl ? path.normalize(imageUrl) : null; // Normalize image URL if it exists
+
     const { 
         jobTitle, jobLocation, companyName, 
         companyMail, jobDescription, category,
@@ -144,8 +151,55 @@ exports.getPost = async (req, res, next) => {
 }
 
 
-//edit
+exports.updatePost = async (req, res, next) => {
+    const postId = req.params.postId;
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        const error = new Error('Validation failed, the data is incorrect')
+        error.statusCode = 422; // adding own custume property 
+        throw error;
+    }
+    const imageUrl = req.body.imageUrl;
+    if(req.file) {
+        imageUrl = req.file.path;
+    }
 
-//update
+    try {
+        const findPost = await Post.findById(postId);
+        if (!findPost) {
+            const error = new Error("not find post.");
+            error.statusCode = 404;
+            throw error;
+        }
+        if (imageUrl !== post.imageUrl) {
+            clearImage(findPost.imageUrl);
+        }
+        findPost.jobTitle = req.body.jobTitle;
+        findPost.jobLocation = req.body.jobLocation;
+        findPost.companyName = req.body.companyName;
+        findPost.companyMail = req.body.companyMail;
+        findPost.jobDescription = req.body.jobDescription;
+        findPost.category = req.body.category;
+        findPost.jobType = req.body.jobType;
+        findPost.imageUrl = imageUrl; // Update imageUrl only if available
+        findPost.salary = req.body.salary;
+        findPost.currency = req.body.currency;
+        findPost.timePeriod = req.body.timePeriod;
+        findPost.companyWebsite = req.body.companyWebsite;
+        findPost.companyInfo = req.body.companyInfo;
+
+        const updatedPost = await findPost.save();
+
+        res.status(200).json({ message: 'post updated.', updatedPost});
+    } catch (err) {
+        next(err);
+    }
+
+};
+
+const clearImage = filePath => {
+    filePath = path.join(__dirname, '..', filePath);
+    fs.unlink(filePath, err => console.log(err));
+};
 
 //delete
