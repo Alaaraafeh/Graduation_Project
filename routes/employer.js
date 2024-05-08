@@ -57,6 +57,8 @@ employerController.postAddUser);
 // post jobs
 router.get("/posts", isAuth, employerController.getPosts)
 
+const upload = require('../middleware/megiaUpload');
+
 router.post("/createPost", [
     body("jobTitle").isLength({min: 3}),
     body("jobLocation").isLength({min: 2}),
@@ -75,12 +77,12 @@ router.post("/createPost", [
     }), 
     body("companyName").isLength({min: 2}),
     body("jobDescription").isLength({min: 20}).withMessage("the descreption is to short, pleace give mor ditails")
-], employerController.createPost)
+],upload.single('image'), employerController.createPost)
 
 
 router.get('/post/:postId',employerController.getPost);
 
-router.put('/post/:postId',[
+router.put('/updatePost/:postId',[
     body("jobTitle").isLength({min: 3}),
     body("jobLocation").isLength({min: 2}),
     body('companyMail')
@@ -98,7 +100,7 @@ router.put('/post/:postId',[
     }), 
     body("companyName").isLength({min: 2}),
     body("jobDescription").isLength({min: 20}).withMessage("the descreption is to short, pleace give mor ditails")
-]);
+], employerController.updatePost);
 
 
 

@@ -6,10 +6,12 @@ const Post = require("../models/post");
 const { validationResult } = require('express-validator');
 const { find } = require('../models/jopseeker');
 const { post } = require('../routes/jopseeker');
+const { uploadImageToCloudinary } = require('../util/uploadImage');
+const mongoose = require("mongoose");
 
 
 exports.getNewUser = async (req, res, next) => {
-    res.status(200).json({ page: "employer registration page"})
+    res.status(200).json({ page: "employer registration page" })
 };
 
 
@@ -24,14 +26,14 @@ exports.postAddUser = async (req, res, next) => {
     const confirmPassword = req.body.confirmPassword;
 
     const errors = validationResult(req);
-    if(!errors.isEmpty()){
+    if (!errors.isEmpty()) {
         console.log(errors.array());
         //const errorMessages = errors.array().map(error => error.msg);
-        return res.status(422).json({ message:'Validation failed', errors: errors.array() });
+        return res.status(422).json({ message: 'Validation failed', errors: errors.array() });
     }
 
-    if(email !== confirmEmail){
-        const error =new Error('Email and confirmEmail do not match.');
+    if (email !== confirmEmail) {
+        const error = new Error('Email and confirmEmail do not match.');
         error.statusCode = 422;
         //error.data = errors.array();
         throw error;
@@ -50,9 +52,9 @@ exports.postAddUser = async (req, res, next) => {
             password: hashPassword,
             confirmPassword: hashConfirmPassword,
         });
-    
+
         await user.save()
-        res.status(201).json({massage: 'employer user added successfuly'});
+        res.status(201).json({ massage: 'employer user added successfuly' });
         // res.redirect('/Home')
     } catch (err) {
         res.status(500).send("Something went wrong. Please try again later.");
@@ -62,9 +64,9 @@ exports.postAddUser = async (req, res, next) => {
 
 // post jops
 exports.getPosts = async (req, res, next) => {
-    try{
+    try {
         const allPosts = await Post.find();
-        if ( allPosts.length > 0){
+        if (allPosts.length > 0) {
             return res.status(200).json({
                 message: "Fetched posts successfully",
                 posts: allPosts   // jop title, location, jop type
@@ -85,42 +87,42 @@ exports.getPosts = async (req, res, next) => {
 
 exports.createPost = async (req, res, next) => {
     const errors = validationResult(req);
-    if (!errors.isEmpty()) {
+   /* if (!errors.isEmpty()) {
         const error = new Error('Validation failed, the data is incorrect')
         error.statusCode = 422; // adding own custume property 
         throw error;
-    }
+    }*/
     if (!req.file) {
         const error = new Error('No image provided.');
         error.statusCode = 422;
         throw error;
     }
-  //  const imageUrl = req.file.path.replace("\\" ,"/");
-    let imageUrl = req.file ? req.file.path : null; // Use ternary operator to handle null if req.file is undefined
-    imageUrl = imageUrl ? path.normalize(imageUrl) : null; // Normalize image URL if it exists
+    const postId = new mongoose.Types.ObjectId;
+    const result = await uploadImageToCloudinary(req.file.path, postId, "postsimage")
 
-    const { 
-        jobTitle, jobLocation, companyName, 
+    const {
+        jobTitle, jobLocation, companyName,
         companyMail, jobDescription, category,
-        jobType, salary, currency, timePeriod, 
-        companyWebsite, companyInfo 
+        jobType, salary, currency, timePeriod,
+        companyWebsite, companyInfo
     } = req.body;
-    
+
     const post = new Post({
-        jobTitle : jobTitle,
+        _id: postId,
+        jobTitle: jobTitle,
         jobLocation: jobLocation,
         companyName: companyName,
         companyMail: companyMail,
         jobDescription: jobDescription,
         category: category,
         jobType: jobType,
-        imageUrl: imageUrl,
+        imageUrl: result.data,
         salary: salary,
         currency: currency,
         timePeriod: timePeriod,
         companyWebsite: companyWebsite,
         companyInfo: companyInfo,
-        creator: {name: "alaa"}
+        creator: { name: "alaa" }
     })
     try {
         await post.save()
@@ -144,7 +146,7 @@ exports.getPost = async (req, res, next) => {
             error.statusCode = 404;
             throw error;
         }
-        res.status(200).json({ message: 'post fetched.', post: findPost});
+        res.status(200).json({ message: 'post fetched.', post: findPost });
     } catch (err) {
         next(err);
     }
@@ -160,7 +162,7 @@ exports.updatePost = async (req, res, next) => {
         throw error;
     }
     const imageUrl = req.body.imageUrl;
-    if(req.file) {
+    if (req.file) {
         imageUrl = req.file.path;
     }
 
@@ -190,7 +192,7 @@ exports.updatePost = async (req, res, next) => {
 
         const updatedPost = await findPost.save();
 
-        res.status(200).json({ message: 'post updated.', updatedPost});
+        res.status(200).json({ message: 'post updated.', updatedPost });
     } catch (err) {
         next(err);
     }
@@ -199,7 +201,15 @@ exports.updatePost = async (req, res, next) => {
 
 const clearImage = filePath => {
     filePath = path.join(__dirname, '..', filePath);
-    fs.unlink(filePath, err => console.log(err));
+    try {
+        fs.unlinkSync(filePath); // Synchronously unlink the file
+        console.log('Image file deleted successfully:', filePath);
+    } catch (error) {
+        console.error('Error deleting image file:', error);
+        // Handle the error gracefully, such as logging it or sending an error response
+        // For example, you can throw an error or return a response indicating the failure to delete the image file
+        throw error;
+    }
 };
 
 //delete
