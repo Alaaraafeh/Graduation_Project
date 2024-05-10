@@ -54,7 +54,7 @@ exports.postAddUser = async (req, res, next) => {
         });
 
         await user.save()
-        res.status(201).json({ massage: 'employer user added successfuly' });
+        res.status(201).json({ massage: 'employer user added successfuly', id: user._id });
         // res.redirect('/Home')
     } catch (err) {
         res.status(500).send("Something went wrong. Please try again later.");
@@ -155,16 +155,22 @@ exports.getPost = async (req, res, next) => {
 
 exports.updatePost = async (req, res, next) => {
     const postId = req.params.postId;
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        const error = new Error('Validation failed, the data is incorrect')
-        error.statusCode = 422; // adding own custume property 
+
+    if (!req.file) {
+        const error = new Error('No image provided.');
+        error.statusCode = 422;
         throw error;
     }
-    const imageUrl = req.body.imageUrl;
-    if (req.file) {
-        imageUrl = req.file.path;
-    }
+    const result = await uploadImageToCloudinary(req.file.path, postId, "postsimage");
+
+    const errors = validationResult(req);
+   /* if (!errors.isEmpty()) {
+        const error = new Error('Validation failed, the data is incorrect');
+        error.statusCode = 422;
+        console.log(errors.array()); // Log the validation errors
+        throw error;
+      }*/
+      
 
     try {
         const findPost = await Post.findById(postId);
@@ -173,9 +179,6 @@ exports.updatePost = async (req, res, next) => {
             error.statusCode = 404;
             throw error;
         }
-        if (imageUrl !== post.imageUrl) {
-            clearImage(findPost.imageUrl);
-        }
         findPost.jobTitle = req.body.jobTitle;
         findPost.jobLocation = req.body.jobLocation;
         findPost.companyName = req.body.companyName;
@@ -183,7 +186,7 @@ exports.updatePost = async (req, res, next) => {
         findPost.jobDescription = req.body.jobDescription;
         findPost.category = req.body.category;
         findPost.jobType = req.body.jobType;
-        findPost.imageUrl = imageUrl; // Update imageUrl only if available
+        findPost.imageUrl = result.data;
         findPost.salary = req.body.salary;
         findPost.currency = req.body.currency;
         findPost.timePeriod = req.body.timePeriod;
@@ -199,17 +202,21 @@ exports.updatePost = async (req, res, next) => {
 
 };
 
-const clearImage = filePath => {
-    filePath = path.join(__dirname, '..', filePath);
-    try {
-        fs.unlinkSync(filePath); // Synchronously unlink the file
-        console.log('Image file deleted successfully:', filePath);
-    } catch (error) {
-        console.error('Error deleting image file:', error);
-        // Handle the error gracefully, such as logging it or sending an error response
-        // For example, you can throw an error or return a response indicating the failure to delete the image file
-        throw error;
-    }
-};
 
-//delete
+exports.deletePost = async(req, res, next) => {
+    const postId = req.params.postId;
+    try{
+        const findPost = await Post.findById(postId)
+        if (!findPost) {
+            const error = new Error("not find post.");
+            error.statusCode = 404;
+            throw error;
+        }
+        // check logged in user
+        await Post.findByIdAndDelete(postId);
+        res.status(200).json({massage: "Deleted post."})
+    } catch (err) {
+        next(err)
+    }
+
+}

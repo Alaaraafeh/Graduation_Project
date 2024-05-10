@@ -100,7 +100,9 @@ router.put('/updatePost/:postId',[
     }), 
     body("companyName").isLength({min: 2}),
     body("jobDescription").isLength({min: 20}).withMessage("the descreption is to short, pleace give mor ditails")
-], employerController.updatePost);
+],upload.single('image') , employerController.updatePost);
+
+router.delete('/post/:postId', employerController.deletePost);
 
 
 
