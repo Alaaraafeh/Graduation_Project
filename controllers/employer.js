@@ -85,16 +85,17 @@ exports.getPosts = async (req, res, next) => {
 
 exports.createPost = async (req, res, next) => {
     const errors = validationResult(req);
-   /* if (!errors.isEmpty()) {
+   if (!errors.isEmpty()) {
         const error = new Error('Validation failed, the data is incorrect')
         error.statusCode = 422; // adding own custume property 
         throw error;
-    }*/
+    }
     if (!req.file) {
         const error = new Error('No image provided.');
         error.statusCode = 422;
         throw error;
     }
+
     const postId = new mongoose.Types.ObjectId;
     const result = await uploadImageToCloudinary(req.file.path, postId, "postsimage")
 
@@ -162,12 +163,12 @@ exports.updatePost = async (req, res, next) => {
     const result = await uploadImageToCloudinary(req.file.path, postId, "postsimage");
 
     const errors = validationResult(req);
-   /* if (!errors.isEmpty()) {
+   if (!errors.isEmpty()) {
         const error = new Error('Validation failed, the data is incorrect');
         error.statusCode = 422;
         console.log(errors.array()); // Log the validation errors
         throw error;
-      }*/
+      }
       
 
     try {

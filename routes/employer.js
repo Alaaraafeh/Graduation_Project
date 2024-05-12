@@ -58,14 +58,12 @@ router.get("/posts", isAuth, employerController.getPosts)
 
 const upload = require('../middleware/megiaUpload');
 
-router.post("/createPost", [
+router.post("/createPost", /*[
     body("jobTitle").isLength({min: 3}),
     body("jobLocation").isLength({min: 2}),
     body('companyMail')
     .not().isEmpty()
     .withMessage('please enter a valid email.')
-    .isEmail()
-    .withMessage('Invalid email address')
     .normalizeEmail()
     .custom( async (email) => {
         const findUser = await employerModel.findOne({email: email})
@@ -75,13 +73,14 @@ router.post("/createPost", [
         return true
     }), 
     body("companyName").isLength({min: 2}),
-    body("jobDescription").isLength({min: 20}).withMessage("the descreption is to short, pleace give mor ditails")
-],upload.single('image'), employerController.createPost)
+    body("jobDescription").isLength({min: 20})
+    .withMessage("the descreption is to short, pleace give more ditails")
+],*/upload.single('image'), employerController.createPost)
 
 
 router.get('/post/:postId',employerController.getPost);
 
-router.put('/updatePost/:postId',[
+router.put('/updatePost/:postId'/*,[
     body("jobTitle").isLength({min: 3}),
     body("jobLocation").isLength({min: 2}),
     body('companyMail')
@@ -99,7 +98,7 @@ router.put('/updatePost/:postId',[
     }), 
     body("companyName").isLength({min: 2}),
     body("jobDescription").isLength({min: 20}).withMessage("the descreption is to short, pleace give mor ditails")
-],upload.single('image') , employerController.updatePost);
+]*/,upload.single('image') , employerController.updatePost);
 
 router.delete('/post/:postId', employerController.deletePost);
 
