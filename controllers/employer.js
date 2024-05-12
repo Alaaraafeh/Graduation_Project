@@ -14,8 +14,6 @@ exports.getNewUser = async (req, res, next) => {
     res.status(200).json({ page: "employer registration page" })
 };
 
-
-//registration
 exports.postAddUser = async (req, res, next) => {
     const firstName = req.body.firstName;
     const lastName = req.body.lastName;
