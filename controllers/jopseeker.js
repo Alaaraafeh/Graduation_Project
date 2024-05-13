@@ -96,18 +96,15 @@ exports.createCv = async (req, res, next) => {
     }
 }
 
-/*
+
 exports.editCv = async (req, res, next) => {
-    const cvId = req.params.cvId;
-
-   if (!errors.isEmpty()) {
-        const error = new Error('Validation failed, the data is incorrect');
-        error.statusCode = 422;
-        console.log(errors.array()); // Log the validation errors
-        throw error;
-      }
-      
-
+    const cvId = req.params.cvId
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+         const error = new Error('Validation failed, the data is incorrect')
+         error.statusCode = 422;
+         throw error;
+    }
     try {
         const findCv = await Cv.findById(cvId);
         if (!findCv) {
@@ -117,17 +114,22 @@ exports.editCv = async (req, res, next) => {
         }
         findCv.jobTitle = req.body.jobTitle;
         findCv.jobLocation = req.body.jobLocation;
-        findCv.companyName = req.body.companyName;
-        findCv.companyMail = req.body.companyMail;
-        findCv.jobDescription = req.body.jobDescription;
-        findCv.category = req.body.category;
-        findCv.jobType = req.body.jobType;
-        findCv.imageUrl = result.data;
-        findCv.salary = req.body.salary;
-        findCv.currency = req.body.currency;
-        findCv.timePeriod = req.body.timePeriod;
-        findCv.companyWebsite = req.body.companyWebsite;
-        findCv.companyInfo = req.body.companyInfo;
+        findCv.email = req.body.email;
+        findCv.phoneNumber = req.body.phoneNumber;
+        findCv.address = req.body.address;
+        findCv.city = req.body.city;
+        findCv.country = req.body.country;
+        findCv.nationalty = req.body.nationalty;
+        findCv.date = req.body.date;
+        findCv.personalStatement = req.body.personalStatement;
+        findCv.employmentHistory = req.body.employmentHistory;
+        findCv.education = req.body.education;
+        findCv.languages = req.body.languages;
+        findCv.certifications = req.body.certifications;
+        findCv.awards = req.body.awards;
+        findCv.links = req.body.links;
+        findCv.interests = req.body.interests;
+        findCv.skills = req.body.skills;
 
         const updatedCv = await findCv.save();
 
@@ -137,7 +139,7 @@ exports.editCv = async (req, res, next) => {
     }
 };
 
-*/
+
 exports.getCv = async (req, res, next) => {
     const cvId = req.params.cvId;
     try {

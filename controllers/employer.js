@@ -154,7 +154,6 @@ exports.getPost = async (req, res, next) => {
 
 exports.updatePost = async (req, res, next) => {
     const postId = req.params.postId;
-
     if (!req.file) {
         const error = new Error('No image provided.');
         error.statusCode = 422;
@@ -163,13 +162,11 @@ exports.updatePost = async (req, res, next) => {
     const result = await uploadImageToCloudinary(req.file.path, postId, "postsimage");
 
     const errors = validationResult(req);
-   if (!errors.isEmpty()) {
-        const error = new Error('Validation failed, the data is incorrect');
-        error.statusCode = 422;
-        console.log(errors.array()); // Log the validation errors
-        throw error;
-      }
-      
+    if (!errors.isEmpty()) {
+         const error = new Error('Validation failed, the data is incorrect')
+         error.statusCode = 422;
+         throw error;
+     }
 
     try {
         const findPost = await Post.findById(postId);

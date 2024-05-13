@@ -67,6 +67,9 @@ router.get("/Cv/:cvId", jopseekerController.getCv);
 
 router.delete("/Delete/:cvId", jopseekerController.deleteCv);
 
+router.post("/Edit/:cvId", jopseekerController.editCv);
+
+
 
 
 module.exports = router;
