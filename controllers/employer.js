@@ -152,7 +152,7 @@ exports.getPost = async (req, res, next) => {
 }
 
 
-exports.updatePost = async (req, res, next) => {
+exports.editPost = async (req, res, next) => {
     const postId = req.params.postId;
     if (!req.file) {
         const error = new Error('No image provided.');
@@ -175,6 +175,7 @@ exports.updatePost = async (req, res, next) => {
             error.statusCode = 404;
             throw error;
         }
+
         findPost.jobTitle = req.body.jobTitle;
         findPost.jobLocation = req.body.jobLocation;
         findPost.companyName = req.body.companyName;
@@ -188,6 +189,7 @@ exports.updatePost = async (req, res, next) => {
         findPost.timePeriod = req.body.timePeriod;
         findPost.companyWebsite = req.body.companyWebsite;
         findPost.companyInfo = req.body.companyInfo;
+        findPost.creator = JSON.parse(req.body.creator);
 
         const updatedPost = await findPost.save();
 

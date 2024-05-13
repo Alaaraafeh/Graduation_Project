@@ -80,25 +80,7 @@ router.post("/createPost", /*[
 
 router.get('/post/:postId',employerController.getPost);
 
-router.put('/updatePost/:postId'/*,[
-    body("jobTitle").isLength({min: 3}),
-    body("jobLocation").isLength({min: 2}),
-    body('companyMail')
-    .not().isEmpty()
-    .withMessage('please enter a valid email.')
-    .isEmail()
-    .withMessage('Invalid email address')
-    .normalizeEmail()
-    .custom( async (email) => {
-        const findUser = await employerModel.findOne({email: email})
-        if (findUser) {
-            throw new Error('user already exists!')
-        }
-        return true
-    }), 
-    body("companyName").isLength({min: 2}),
-    body("jobDescription").isLength({min: 20}).withMessage("the descreption is to short, pleace give mor ditails")
-]*/,upload.single('image') , employerController.updatePost);
+router.put('/editPost/:postId', upload.single('image') , employerController.editPost);
 
 router.delete('/post/:postId', employerController.deletePost);
 
