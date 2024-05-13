@@ -60,4 +60,13 @@ router.post('/Registration', [
         })
 ], jopseekerController.postAddUser);
 
+
+router.post("/CreateCv", jopseekerController.createCv);
+
+router.get("/Cv/:cvId", jopseekerController.getCv);
+
+router.delete("/Delete/:cvId", jopseekerController.deleteCv);
+
+
+
 module.exports = router;

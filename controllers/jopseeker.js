@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const Jopseeker = require("../models/jopseeker");
 const { validationResult } = require('express-validator');
-// function that grap all the errors get from check middelware
+const Cv = require("../models/cv");
 
 
 exports.getNewUser = async (req, res, next) => {
@@ -57,40 +57,116 @@ exports.postAddUser = async (req, res, next) => {
 
 
 
+exports.createCv = async (req, res, next) => {
+    const errors = validationResult(req);
+   if (!errors.isEmpty()) {
+        const error = new Error('Validation failed, the data is incorrect')
+        error.statusCode = 422;
+        throw error;
+    }
+
+    const cv = new Cv({
+        jobTitle: req.body.jobTitle,
+        jobLocation: req.body.jobLocation,
+        email: req.body.email,
+        phoneNumber: req.body.phoneNumber,
+        address: req.body.address,
+        city: req.body.city,
+        country: req.body.country,
+        nationalty: req.body.nationalty,
+        date: req.body.date,
+        personalStatement: req.body.personalStatement,
+        employmentHistory: req.body.employmentHistory,
+        education: req.body.education,
+        languages: req.body.languages,
+        certifications: req.body.certifications,
+        awards: req.body.awards,
+        links: req.body.links,
+        interests: req.body.interests,
+        skills: req.body.skills
+    })
+    try {
+        await cv.save()
+        res.status(201).json({
+            message: "CV created successfully!",
+            cv: cv
+        })
+    } catch (err) {
+        next(err);
+    }
+}
+
+/*
+exports.editCv = async (req, res, next) => {
+    const cvId = req.params.cvId;
+
+   if (!errors.isEmpty()) {
+        const error = new Error('Validation failed, the data is incorrect');
+        error.statusCode = 422;
+        console.log(errors.array()); // Log the validation errors
+        throw error;
+      }
+      
+
+    try {
+        const findCv = await Cv.findById(cvId);
+        if (!findCv) {
+            const error = new Error("not find Cv.");
+            error.statusCode = 404;
+            throw error;
+        }
+        findCv.jobTitle = req.body.jobTitle;
+        findCv.jobLocation = req.body.jobLocation;
+        findCv.companyName = req.body.companyName;
+        findCv.companyMail = req.body.companyMail;
+        findCv.jobDescription = req.body.jobDescription;
+        findCv.category = req.body.category;
+        findCv.jobType = req.body.jobType;
+        findCv.imageUrl = result.data;
+        findCv.salary = req.body.salary;
+        findCv.currency = req.body.currency;
+        findCv.timePeriod = req.body.timePeriod;
+        findCv.companyWebsite = req.body.companyWebsite;
+        findCv.companyInfo = req.body.companyInfo;
+
+        const updatedCv = await findCv.save();
+
+        res.status(200).json({ message: 'Cv updated.', updatedCv });
+    } catch (err) {
+        next(err);
+    }
+};
+
+*/
+exports.getCv = async (req, res, next) => {
+    const cvId = req.params.cvId;
+    try {
+        const findCv = await Cv.findById(cvId);
+        if (!findCv) {
+            const error = new Error("not find cv.");
+            error.statusCode = 404;
+            throw error;
+        }
+        res.status(200).json({ message: 'cv fetched.', post: findCv });
+    } catch (err) {
+        next(err);
+    }
+}
 
 
+exports.deleteCv = async(req, res, next) => {
+    const cvId = req.params.cvId;
+    try{
+        const findCv = await Cv.findById(cvId)
+        if (!findCv) {
+            const error = new Error("not find Cv");
+            error.statusCode = 404;
+            throw error;
+        }
+        await Cv.findByIdAndDelete(cvId);
+        res.status(200).json({massage: "Deleted Cv."})
+    } catch (err) {
+        next(err)
+    }
 
-// exports.postFindUser = async (req, res, next) => {
-//     // log in logic 
-//     try {
-//         const {email , password} = req.body;
-//         const findUser = await Jopseeker.findOne({ email });
-//         // hashed the input normal password and compare it with the hashed saved password in DB
-//         const passwordMath = await bcrypt.compare(password, findUser.password);
-
-//         if(findUser && passwordMath) {
-//             return res.json({ message : 'Logged in successfully'});
-//         }
-//         res.status(400).send('Wrong email or password');
-
-//     } catch (err) {
-//         res.status(500).send("Something went wrong. Please try again later.");
-//     }
-// };
-
-
-//edit
-
-//update
-
-//delete
-
-// app.post('/user/:id', (req, res)=> {
-//     const id = req.params;
-//     const name = req.body.name;
-//     const rule = req.body.rule;
-//     res.send({
-//     userId : id,
-//     name: name,
-//     rule: rule})
-// })
+}
