@@ -33,14 +33,14 @@ exports.logIn = async (req, res, next) => {
             throw error;
         }
         const token = jwt.sign({ email: user.email, userId: user._id.toString() }, "tokensecret", { expiresIn: '24h' });
-        return res.status(200).json({ token: token, message: 'Logged in successfully' });
+        return res.status(200).json({ token: token, message: 'Logged in successfully' , loggedIn: true });
     } catch (err) {
         console.log(err); 
 
         if (err.statusCode === 401) {
-            return res.status(401).json({ message: err.message });
+            return res.status(401).json({ message: err.message , loggedIn: false});
         } else {
-            return res.status(500).json({ message: 'Something went wrong. Please try again later.' });
+            return res.status(500).json({ message: 'Something went wrong. Please try again later.',  loggedIn: false });
         }
     }
 };
