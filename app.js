@@ -38,8 +38,8 @@ app.use((error, req, res, next) => {
     const data = error.data || [];
     res.status(status).json({ message: message, data: data}); 
 });
-
-mongoose.connect('mongodb+srv://alaaraafeh:0n2tZjKrUSz3sznE@cluster0.fwbw8sv.mongodb.net/mongodb')
+mongoose.connect('mongodb+srv://mhmeddahroug:4lPyqOHlb6PjkAyn@cluster0.8uj9xof.mongodb.net/mohamedDahroug')
+// mongoose.connect('mongodb+srv://alaaraafeh:0n2tZjKrUSz3sznE@cluster0.fwbw8sv.mongodb.net/mongodb')
 .then(()=> {
     app.listen(8080)
     console.log("Connected to Database");
