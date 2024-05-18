@@ -2,92 +2,112 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const cvSchema = new Schema({
-    jobTitle: {
-        type: String,
-        required: true
-    },
-    jobLocation: {
-        type: String,
-        required: true
-    },
     email: {
+        type: String
+    },
+    jobTitle: {
+        type: String
+    },
+    location: {
         type: String,
         required: true
     },
-    phoneNumber: {
-        type: String,
-        required: true
-    },
-    address: {
-        type: String,
-        required: true
-    },
-    city: {
-        type: String,
-    },
-    country: {
-        type: String,
-    },
-    nationalty: {
-        type: String,
-    },
-    date: {
-        type: String,
-    },
+
     personalStatement: {
-        name: {
-            type: String,
-            required: true
+        descPersonal: {
+            type: String
         }
     },
-    employmentHistory:{
-        name: {
-            type: String,
-            required: true
-        }
+
+    employmentHistory: {
+        historyJobTitle: {
+            type: String
+        },
+        historyCompanyName: {
+            type: String
+        },
+        locationComp: {
+            type: String
+        },
+        startJob: {
+            type: String
+        },
+        endJob: {
+            type: String
+        },
+        descJob: {
+            type: String
+        },
     },
+
     education: {
-        name: {
-            type: String,
-            required: true
+        university: {
+            type: String
+        },
+        degree:{
+            type: String
+        },
+        locationEduc:{
+            type: String
+        },
+        majorEduc:{
+            type: String
+        },
+        startEduc:{
+            type: String
+        },
+        endEduc:{
+            type: String
+        },
+        descEduc:{
+            type: String
         }
     },
+
     languages: {
-        name: {
-            type: String,
-            required: true
+        language:{
+            type: String
+        },
+        level: {
+            type: String
         }
     },
-    certifications: {
-        name: {
-            type: String,
-            required: true
+
+    certifications:{
+        titleCert:{
+            type: String
+        },
+        startCert:{
+            type: String
+        },
+        endCert:{
+            type: String
+        },
+        descCert:{
+            type: String
         }
     },
-    awards: {
-        name: {
-            type: String,
-            required: true
-        }
-    },
+   
     links: {
-        name: {
+        profileLink: {
             type: String,
-            required: true
-        }
+        },
     },
-    interests: {
-        name: {
-            type: String,
-            required: true
-        }
-    },
+
     skills: {
-        name: {
+        skill:{
             type: String,
-            required: true
+        },
+        experience: {
+            type: String
         }
-    }
+    },
+
+    strength: {
+        descrStrengh:{
+            type: String
+        }
+    } 
 }, { timestamps: true });
 
 module.exports = mongoose.model('Cv', cvSchema);

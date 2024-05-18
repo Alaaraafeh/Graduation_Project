@@ -3,6 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
+const axios = require('axios');
 
 const jopseekerRouter = require('./routes/jopseeker');
 const employerRouter = require('./routes/employer')
@@ -12,7 +13,9 @@ const app = express();
 
 
 app.use(bodyParser.json());
+//app.use(cors());
 app.use('/images', express.static(path.join(__dirname, 'images')));
+
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -24,10 +27,37 @@ app.use((req, res, next) => {
     next();
 });
 
-//app.use(userRouter);
 app.use('/jobseeker', jopseekerRouter);
 app.use('/employer', employerRouter);
 app.use('/user', userRouter);
+
+
+app.post('/upload-cv', async (req, res) => {
+    try {
+        const response = await axios.post('http://127.0.0.1:5000/upload-cv', req.body, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        res.send(response.data);
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+});
+
+app.post('/generate_text', async (req, res) => {
+    try {
+        const response = await axios.post('http://127.0.0.1:5000/generate_text', req.body, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        res.send(response.data);
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+});
+
 
 //general error handle function 3 after all my routes
 //this will be exe when an error is thrown

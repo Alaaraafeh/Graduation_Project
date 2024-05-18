@@ -67,23 +67,16 @@ exports.createCv = async (req, res, next) => {
 
     const cv = new Cv({
         jobTitle: req.body.jobTitle,
-        jobLocation: req.body.jobLocation,
+        location: req.body.location,
         email: req.body.email,
-        phoneNumber: req.body.phoneNumber,
-        address: req.body.address,
-        city: req.body.city,
-        country: req.body.country,
-        nationalty: req.body.nationalty,
-        date: req.body.date,
         personalStatement: req.body.personalStatement,
         employmentHistory: req.body.employmentHistory,
         education: req.body.education,
         languages: req.body.languages,
         certifications: req.body.certifications,
-        awards: req.body.awards,
         links: req.body.links,
-        interests: req.body.interests,
-        skills: req.body.skills
+        skills: req.body.skills,
+        strength: req.body.strength
     })
     try {
         await cv.save()
